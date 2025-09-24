@@ -1,5 +1,9 @@
 # Polar Loop Data Analyzer
 
+<div align="center">
+  <img src="docs/dashboard.png" alt="Polar Loop Analyzer Dashboard" width="800"/>
+</div>
+
 A Python TUI (Terminal User Interface) application for analyzing Polar Loop fitness band data with heart rate graphics, trends, and comprehensive activity statistics. Built with clean architecture principles and modern Python practices.
 
 ## ✨ Features
@@ -215,7 +219,7 @@ We welcome contributions from the community! Whether you're interested in adding
 ### Development Environment
 ```bash
 # Clone your fork
-git clone https://github.com/your-username/polar-loop-analyzer.git
+git clone https://github.com/neatnettech/polar-loop-analyzer.git
 cd polar-loop-analyzer
 
 # Set up development environment
