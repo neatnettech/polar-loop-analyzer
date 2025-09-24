@@ -1,5 +1,5 @@
 from typing import Dict, Any, Optional, List, Tuple
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 from pathlib import Path
 from src.infrastructure.database import Database
 from src.infrastructure.config import AppConfig
@@ -27,9 +27,25 @@ class PolarAnalyzerFacade:
 
         self._current_device_id = None
 
-    def initialize_data(self) -> Dict[str, int]:
+    def initialize_data(self, force_reimport: bool = False) -> Dict[str, Any]:
         """Import all data from JSON files into SQLite database."""
-        return self.import_service.import_all_data()
+        return self.import_service.import_all_data(force_reimport)
+
+    def get_import_status(self) -> Dict[str, Any]:
+        """Get current import status and statistics."""
+        return {
+            "import_stats": self.import_service.get_import_stats(),
+            "import_history": self.import_service.get_import_history()
+        }
+
+    def reimport_file(self, filename: str) -> Dict[str, Any]:
+        """Force reimport of a specific file."""
+        return self.import_service.force_reimport_file(filename)
+
+    def check_for_new_files(self) -> List[str]:
+        """Check for new files that haven't been imported."""
+        new_files = self.import_service.file_import_repo.get_new_files(self.config.data_directory)
+        return [f.name for f in new_files]
 
     def set_device(self, device_id: str) -> bool:
         """Set the current device for operations."""

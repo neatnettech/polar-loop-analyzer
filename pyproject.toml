@@ -2,7 +2,7 @@
 name = "polar-analyzer"
 version = "0.1.0"
 description = "Polar Loop fitness data analyzer with TUI"
-authors = ["Your Name <you@example.com>"]
+authors = ["neatnettech <pp@neatnet.tech>"]
 readme = "README.md"
 packages = [{include = "src"}]
 

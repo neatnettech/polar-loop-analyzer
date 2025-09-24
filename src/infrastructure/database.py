@@ -65,6 +65,21 @@ class DailySummaryDB(Base):
     total_calories = Column(Float, nullable=True)
 
 
+class FileImportDB(Base):
+    __tablename__ = "file_imports"
+
+    id = Column(Integer, primary_key=True)
+    filename = Column(String, nullable=False, unique=True, index=True)
+    file_path = Column(String, nullable=False)
+    file_size = Column(Integer, nullable=False)
+    file_hash = Column(String, nullable=False, index=True)
+    import_date = Column(DateTime, nullable=False, index=True)
+    file_type = Column(String, nullable=False)  # 'heart_rate', 'activity', 'ppi', etc.
+    records_imported = Column(Integer, default=0)
+    import_status = Column(String, default='completed')  # 'completed', 'failed', 'partial'
+    error_message = Column(String, nullable=True)
+
+
 class Database:
     def __init__(self, db_path: str = "data.db"):
         self.engine = create_engine(f"sqlite:///{db_path}", echo=False)

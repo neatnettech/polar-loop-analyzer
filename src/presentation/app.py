@@ -153,7 +153,7 @@ class PolarAnalyzerApp(App):
     def on_mount(self) -> None:
         """Initialize the application."""
         try:
-            # Import data on first run
+            # Import data (incremental by default)
             stats = self.facade.initialize_data()
 
             # Select first device if available
@@ -162,19 +162,56 @@ class PolarAnalyzerApp(App):
                 self.facade.set_device(devices[0])
 
             # Show import stats
-            self.notify(
-                f"Imported: {stats['heart_rate_samples']} HR samples, "
-                f"{stats['activity_samples']} activity samples",
-                timeout=3
-            )
+            if stats['new_files'] > 0:
+                self.notify(
+                    f"Processed {stats['new_files']} new files: "
+                    f"{stats['heart_rate_samples']} HR samples, "
+                    f"{stats['activity_samples']} activity samples. "
+                    f"Skipped {stats['skipped_files']} existing files.",
+                    timeout=5
+                )
+            else:
+                self.notify(
+                    f"All {stats['total_files']} files already imported. "
+                    f"Add new files to loop_data/ and refresh.",
+                    timeout=3
+                )
+
+            if stats['errors']:
+                self.notify(
+                    f"Import errors: {len(stats['errors'])} files failed",
+                    severity="warning"
+                )
+
         except Exception as e:
             self.notify(f"Error initializing: {str(e)}", severity="error")
 
     def action_refresh(self) -> None:
-        """Refresh the dashboard."""
-        dashboard = self.query_one(DashboardView)
-        dashboard.update_dashboard()
-        self.notify("Dashboard refreshed", timeout=2)
+        """Refresh the dashboard and check for new files."""
+        try:
+            # Check for new files and import them
+            new_files = self.facade.check_for_new_files()
+            if new_files:
+                stats = self.facade.initialize_data()
+                if stats['new_files'] > 0:
+                    self.notify(
+                        f"Imported {stats['new_files']} new files: "
+                        f"{stats['heart_rate_samples']} HR, "
+                        f"{stats['activity_samples']} activity samples",
+                        timeout=4
+                    )
+                else:
+                    self.notify("No new data to import", timeout=2)
+
+            # Refresh dashboard
+            dashboard = self.query_one(DashboardView)
+            dashboard.update_dashboard()
+
+            if not new_files:
+                self.notify("Dashboard refreshed", timeout=2)
+
+        except Exception as e:
+            self.notify(f"Refresh error: {str(e)}", severity="error")
 
     def action_toggle_dark(self) -> None:
         """Toggle dark mode."""
