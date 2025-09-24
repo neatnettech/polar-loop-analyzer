@@ -1,0 +1,28 @@
+[tool.poetry]
+name = "polar-analyzer"
+version = "0.1.0"
+description = "Polar Loop fitness data analyzer with TUI"
+authors = ["Your Name <you@example.com>"]
+readme = "README.md"
+packages = [{include = "src"}]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+textual = "^0.47.0"
+rich = "^13.7.0"
+plotext = "^5.2.8"
+sqlalchemy = "^2.0.23"
+pydantic = "^2.5.0"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.4.3"
+black = "^23.11.0"
+mypy = "^1.7.0"
+ruff = "^0.1.6"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+polar-analyzer = "src.main:main"
